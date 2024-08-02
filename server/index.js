@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
 
 // Middleware
 app.use(cors());
@@ -28,6 +29,11 @@ io.on('connection', (socket) => {
     console.log('A client disconnected');
   });
 });
+
+setInterval(() => {
+  io.emit('testEvent', { message: '你给我回来' });
+}, 10000);
+
 
 // Routes
 app.get('/api/events', (req, res) => {

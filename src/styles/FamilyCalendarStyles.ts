@@ -98,7 +98,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
   },
-
+  connectionStatus: {
+    fontSize: 14,
+    color: '#007AFF',
+    marginBottom: 5,
+  },
+  testMessage: {
+    fontSize: 14,
+    color: '#28A745',
+    marginBottom: 5,
+  },
+  testButton: {
+    backgroundColor: '#17A2B8',
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  testButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
   // 角色选择器样式
   roleSelector: {
     flexDirection: 'row',

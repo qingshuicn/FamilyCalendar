@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import FamilyCalendar from '../src/FamilyCalendar';
+import FamilyCalendar from '../src/components/FamilyCalendar';
 
 jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
 

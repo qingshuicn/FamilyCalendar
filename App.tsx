@@ -1,20 +1,13 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import FamilyCalendar from './src/FamilyCalendar';
+import { SafeAreaView } from 'react-native';
+import FamilyCalendar from './src/components/FamilyCalendar';
 
 const App: React.FC = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
       <FamilyCalendar />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-});
 
 export default App;

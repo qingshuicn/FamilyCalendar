@@ -1,19 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
+import io from 'socket.io-client';
 import styles from '../styles/FamilyCalendarStyles';
 import MonthView from './MonthView';
 import RoleSelector from './RoleSelector';
 import Timeline from './Timeline';
+import AddEvent from './AddEvent';
 import { formatDate } from '../utils/dateUtils';
+
+const SERVER_URL = 'http://your-server-ip:3000';  // Replace with your server's IP and port
 
 const FamilyCalendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeRole, setActiveRole] = useState('全家');
+  const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const socket = io(SERVER_URL);
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('initialEvents', (initialEvents) => {
+      setEvents(initialEvents);
+    });
+
+    socket.on('newEvent', (newEvent) => {
+      setEvents(prevEvents => [...prevEvents, newEvent]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const changeDate = (days: number) => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + days);
     setCurrentDate(newDate);
+  };
+
+  const handleEventAdded = (newEvent) => {
+    setIsAddEventModalVisible(false);
   };
 
   return (
@@ -42,12 +72,34 @@ const FamilyCalendar: React.FC = () => {
         <View style={styles.header}>
           <Text style={styles.headerText}>家庭日程</Text>
           <RoleSelector activeRole={activeRole} onRoleChange={setActiveRole} />
-          <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => setIsAddEventModalVisible(true)}
+          >
             <Text style={styles.addButtonText}>+ 添加日程</Text>
           </TouchableOpacity>
         </View>
-        <Timeline />
+        <Timeline events={events} />
       </View>
+
+      <Modal
+        visible={isAddEventModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsAddEventModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <AddEvent onEventAdded={handleEventAdded} serverUrl={SERVER_URL} />
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setIsAddEventModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>关闭</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

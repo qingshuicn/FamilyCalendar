@@ -145,6 +145,26 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#FFFFFF',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  closeButton: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+  },
+  closeButtonText: {
+    color: 'blue',
+    fontSize: 16,
+  },
 
   // 时间线样式
   timeline: {

@@ -1,22 +1,46 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
-import styles from '../styles/FamilyCalendarStyles';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Timeline: React.FC = () => {
+interface Event {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+}
+
+interface TimelineProps {
+  events: Event[];
+}
+
+const Timeline: React.FC<TimelineProps> = ({ events }) => {
   return (
-    <ScrollView style={styles.timeline}>
-      {Array.from({ length: 24 }, (_, i) => i).map((hour) => (
-        <View key={hour} style={styles.timeSlot}>
-          <Text style={styles.timeText}>
-            {`${hour.toString().padStart(2, '0')}:00`}
-          </Text>
-          <View style={styles.eventContainer}>
-            {/* 这里可以添加实际的日程内容 */}
-          </View>
+    <View style={styles.container}>
+      {events.map((event) => (
+        <View key={event.id} style={styles.eventItem}>
+          <Text style={styles.eventTime}>{event.time}</Text>
+          <Text style={styles.eventTitle}>{event.title}</Text>
         </View>
       ))}
-    </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  eventItem: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  eventTime: {
+    width: 50,
+    fontWeight: 'bold',
+  },
+  eventTitle: {
+    flex: 1,
+  },
+});
 
 export default Timeline;

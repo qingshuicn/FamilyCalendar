@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { SERVER_URL } from 'react-native-dotenv';
 
-interface AddEventProps {
-  onEventAdded: (event: any) => void;
-  serverUrl: string;
+// 定义事件接口
+interface Event {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
 }
 
-const AddEvent: React.FC<AddEventProps> = ({ onEventAdded, serverUrl }) => {
+// 定义组件属性接口
+interface AddEventProps {
+  onEventAdded: (event: Event) => void;
+}
+
+const AddEvent: React.FC<AddEventProps> = ({ onEventAdded }) => {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
 
+  // 处理添加事件
   const handleAddEvent = async () => {
     try {
-      const response = await fetch(`${serverUrl}/api/events`, {
+      const response = await fetch(`${SERVER_URL}/api/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,10 +42,10 @@ const AddEvent: React.FC<AddEventProps> = ({ onEventAdded, serverUrl }) => {
         setDate('');
         setTime('');
       } else {
-        console.error('Failed to add event');
+        console.error('添加事件失败');
       }
     } catch (error) {
-      console.error('Error adding event:', error);
+      console.error('添加事件时出错:', error);
     }
   };
 
@@ -43,23 +53,23 @@ const AddEvent: React.FC<AddEventProps> = ({ onEventAdded, serverUrl }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Event Title"
+        placeholder="事件标题"
         value={title}
         onChangeText={setTitle}
       />
       <TextInput
         style={styles.input}
-        placeholder="Date (YYYY-MM-DD)"
+        placeholder="日期 (YYYY-MM-DD)"
         value={date}
         onChangeText={setDate}
       />
       <TextInput
         style={styles.input}
-        placeholder="Time (HH:MM)"
+        placeholder="时间 (HH:MM)"
         value={time}
         onChangeText={setTime}
       />
-      <Button title="Add Event" onPress={handleAddEvent} />
+      <Button title="添加事件" onPress={handleAddEvent} />
     </View>
   );
 };

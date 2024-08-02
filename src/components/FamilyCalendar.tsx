@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
 import io from 'socket.io-client';
+import { SERVER_URL } from 'react-native-dotenv';
 import styles from '../styles/FamilyCalendarStyles';
 import MonthView from './MonthView';
 import RoleSelector from './RoleSelector';
@@ -8,42 +9,56 @@ import Timeline from './Timeline';
 import AddEvent from './AddEvent';
 import { formatDate } from '../utils/dateUtils';
 
-const SERVER_URL = 'http://your-server-ip:3000';  // Replace with your server's IP and port
+// 定义事件接口
+interface Event {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+}
 
 const FamilyCalendar: React.FC = () => {
+  // 状态定义
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeRole, setActiveRole] = useState('全家');
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]); // 指定类型为 Event[]
 
   useEffect(() => {
+    // 创建 Socket.IO 连接
     const socket = io(SERVER_URL);
 
     socket.on('connect', () => {
-      console.log('Connected to server');
+      console.log('已连接到服务器');
     });
 
-    socket.on('initialEvents', (initialEvents) => {
+    // 接收初始事件列表
+    socket.on('initialEvents', (initialEvents: Event[]) => {
       setEvents(initialEvents);
     });
 
-    socket.on('newEvent', (newEvent) => {
+    // 接收新事件
+    socket.on('newEvent', (newEvent: Event) => {
       setEvents(prevEvents => [...prevEvents, newEvent]);
     });
 
+    // 组件卸载时断开连接
     return () => {
       socket.disconnect();
     };
   }, []);
 
+  // 日期变更处理函数
   const changeDate = (days: number) => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + days);
     setCurrentDate(newDate);
   };
 
-  const handleEventAdded = (newEvent) => {
+  // 事件添加处理函数
+  const handleEventAdded = (newEvent: Event) => {
     setIsAddEventModalVisible(false);
+    // 这里可以添加其他逻辑，比如刷新事件列表
   };
 
   return (
@@ -54,7 +69,7 @@ const FamilyCalendar: React.FC = () => {
             <Text style={styles.navigationButton}>{'<'}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
-            <Text style={styles.todayButton}>Today</Text>
+            <Text style={styles.todayButton}>今天</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => changeDate(1)}>
             <Text style={styles.navigationButton}>{'>'}</Text>
@@ -90,7 +105,7 @@ const FamilyCalendar: React.FC = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <AddEvent onEventAdded={handleEventAdded} serverUrl={SERVER_URL} />
+            <AddEvent onEventAdded={handleEventAdded} />
             <TouchableOpacity 
               style={styles.closeButton}
               onPress={() => setIsAddEventModalVisible(false)}

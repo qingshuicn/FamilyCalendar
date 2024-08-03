@@ -19,6 +19,10 @@ app.use(bodyParser.json());
 app.use(express.static('public')); // Serve static files from 'public' directory
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('Welcome to Family Calendar API');
+});
+
 app.use('/api/events', eventRoutes);
 
 // Database connection
